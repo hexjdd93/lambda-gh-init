@@ -20,12 +20,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1
       - name: npm install
-        env:
-          CI: true
-        run: |
-          npm ci
+        run: npm ci
+      - name: build js
+        run : npx ncc build index.ts
+      - name: create zip
+        run : zip -j deploy.zip ./dist/*
       - name: deploy
-        run: |
-          npx ncc build index.ts
-          zip -j deploy.zip ./dist/*
-          aws lambda update-function-code --function-name=lambda-gh-init --zip-file=fileb://deploy.zip
+        run: aws lambda update-function-code --function-name=lambda-gh-init --zip-file=fileb://deploy.zip
